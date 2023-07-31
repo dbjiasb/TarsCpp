@@ -629,7 +629,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
         BuiltinPtr bPtr  = BuiltinPtr::dynamicCast(member[i]->getTypePtr());
         EnumPtr ePtr = EnumPtr::dynamicCast(member[i]->getTypePtr());
         s << tostr(member[i]->getTypePtr()) << (( ePtr || (bPtr && bPtr->isSimple()))? " " :"? ") << member[i]->getId()
-            << getDefaultValue(member[i],":")
+            << getDefaultValue(member[i],"=")
             << ((i < member.size() - 1) ? ", " : "");
     }
     s << "})" << endl;
