@@ -26,7 +26,7 @@
 #define DEL_TAB g_parse->delTab()
 
 static string g_default_package = "tars_idl";
-static string g_default_tars_package = "/tars/codec/";
+static string g_default_tars_package = "package:tars_flutter/tars/codec/";
 
 //////////////////////////////////////////////////////////////////////////////////
 //
