@@ -132,7 +132,7 @@ else()
     set(LIB_GTEST "gtest")
 
     ExternalProject_Add(ADD_${LIB_GTEST}
-            URL http://cdn.tarsyun.com/src/release-1.10.0.tar.gz
+            URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
             DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/download
             PREFIX ${CMAKE_BINARY_DIR}
             INSTALL_DIR ${CMAKE_SOURCE_DIR}
@@ -140,7 +140,7 @@ else()
             SOURCE_DIR ${CMAKE_BINARY_DIR}/src/gtest-lib
             BUILD_IN_SOURCE 1
             BUILD_COMMAND make
-            URL_MD5 ecd1fa65e7de707cd5c00bdac56022cd
+            #URL_MD5 ecd1fa65e7de707cd5c00bdac56022cd
             )
 endif()
 

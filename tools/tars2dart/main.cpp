@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Tencent is pleased to support the open source community by making Tars available.
  *
  * Copyright (C) 2016THL A29 Limited, a Tencent company. All rights reserved.
@@ -38,7 +38,7 @@ void check(vector<string> &vTars)
     for(size_t i  = 0; i < vTars.size(); i++)
     {
         string ext  = tars::TC_File::extractFileExt(vTars[i]);
-        if(ext == "tars")
+        if(ext == "jce")
         {
             if(!tars::TC_File::isFileExist(vTars[i]))
             {
