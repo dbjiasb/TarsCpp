@@ -628,19 +628,11 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
     {
         BuiltinPtr bPtr  = BuiltinPtr::dynamicCast(member[i]->getTypePtr());
         EnumPtr ePtr = EnumPtr::dynamicCast(member[i]->getTypePtr());
-        s << tostr(member[i]->getTypePtr()) << (( ePtr || (bPtr && bPtr->isSimple()))? " " :"? ") << member[i]->getId()
+        s << "this." << member[i]->getId()
             << getDefaultValue(member[i],"=")
             << ((i < member.size() - 1) ? ", " : "");
     }
     s << "})" << endl;
-    s << TAB << "{" << endl;
-    INC_TAB;
-    for (size_t i = 0; i < member.size(); i++)
-    {
-        s << TAB << "this." << member[i]->getId() << " = " << member[i]->getId() << ";" << endl;
-    }
-    DEL_TAB;
-    s << TAB << "}" << endl;
     s << endl;
  
 
@@ -712,7 +704,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
 
         //基础类型
         if (bPtr){
-            s << TAB << "this." << member[i]->getId() << " = " 
+            s << TAB << member[i]->getId() << " = " 
                 << " _is.read<" << toObjStr(member[i]->getTypePtr()) << ">(" << prefix + member[i]->getId()
                 << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ")" << ";" << endl;
         }
@@ -720,7 +712,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
         //数组
         if (vPtr)
         {
-            s << TAB << "this." << member[i]->getId() << " = "
+            s << TAB << member[i]->getId() << " = "
                 << " _is.read<" << toObjStr(vPtr->getTypePtr()) << ">(" << prefix + member[i]->getId()
                     << ", "  << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ");" << endl;
         }
@@ -733,18 +725,18 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
             if (svPtr)
             {
                 //Map<K,List<V>> 结构
-                s << TAB << "this." << member[i]->getId() << " = "
+                s << TAB << member[i]->getId() << " = "
                 << " _is.readMapList<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(svPtr->getTypePtr()) << ">(" << prefix + member[i]->getId()
                     << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ");" << endl;
             }else if (smPtr)
             {   
                 //Map<K,Map<K2,V2>> 结构
-                s << TAB << "this." << member[i]->getId() << " = "
+                s << TAB << member[i]->getId() << " = "
                 << " _is.readMapMap<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(smPtr->getLeftTypePtr()) << "," << toObjStr(smPtr->getRightTypePtr()) << ">(" << prefix + member[i]->getId()
                     << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ");" << endl;
             }else{
                 //普通 Map<K,V> 结构
-                s << TAB << "this." << member[i]->getId() << " = "
+                s << TAB << member[i]->getId() << " = "
                 << " _is.readMap<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(mPtr->getRightTypePtr()) << ">(" << prefix + member[i]->getId()
                     << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ");" << endl;
             }
@@ -753,14 +745,14 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
         //自定义结构体
         if (sPtr)
         {
-            s << TAB << "this." << member[i]->getId() << " = "
+            s << TAB << member[i]->getId() << " = "
                 << " _is.read<" << toObjStr(member[i]->getTypePtr()) << ">(" << prefix + member[i]->getId()
                     << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ");" << endl;
         }
 
         //枚举
         if (ePtr){
-            s << TAB << "this." << member[i]->getId() << " = " 
+            s << TAB << member[i]->getId() << " = " 
                 << " _is.read<int>(" << prefix + member[i]->getId()
                 << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ")" << ";" << endl;
         }
@@ -813,7 +805,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
 
         //基础类型
         if (bPtr || ePtr){
-            s << TAB << "o." << member[i]->getId() << " = "  << "this." << member[i]->getId()  << ";" << endl;
+            s << TAB << "o." << member[i]->getId() << " = "  << member[i]->getId()  << ";" << endl;
         }
 
         
@@ -823,13 +815,13 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
             BuiltinPtr bPtr = BuiltinPtr::dynamicCast(vPtr->getTypePtr());
             if (bPtr && bPtr->kind() == Builtin::KindByte)
             {
-                s << TAB << "o." << member[i]->getId() << " = "  << "this." << member[i]->getId()  << ";" << endl;
+                s << TAB << "o." << member[i]->getId() << " = "  << member[i]->getId()  << ";" << endl;
             } else {
                 s << TAB << "if (null != " << member[i]->getId() << ")" << endl;
                 s << TAB << "{" << endl;
                 INC_TAB;
                 s << TAB << "o." << member[i]->getId() << " = "
-                    << " listDeepCopy<" << toObjStr(vPtr->getTypePtr()) << ">(this." << member[i]->getId() << "!);" << endl;
+                    << " listDeepCopy<" << toObjStr(vPtr->getTypePtr()) << ">(" << member[i]->getId() << "!);" << endl;
                 DEL_TAB;
                 s << TAB << "}" << endl;
             }
@@ -847,18 +839,18 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
             {
                 //Map<K,List<V>> 结构
                 s << TAB << "o." << member[i]->getId() << " = "
-                << " mapListDeepCopy<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(svPtr->getTypePtr()) << ">(this." << member[i]->getId() << "!);" << endl;
+                << " mapListDeepCopy<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(svPtr->getTypePtr()) << ">(" << member[i]->getId() << "!);" << endl;
 
             }else if (smPtr)
             {   
                 //Map<K,Map<K2,V2>> 结构
                 s << TAB << "o." << member[i]->getId() << " = "
-                << " mapMapDeepCopy<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(smPtr->getLeftTypePtr()) << "," << toObjStr(smPtr->getRightTypePtr()) << "!);" << endl;
+                << " mapDeepCopy<" << toObjStr(mPtr->getLeftTypePtr()) << "," << "Map<" << toObjStr(smPtr->getLeftTypePtr()) << "," << toObjStr(smPtr->getRightTypePtr()) << ">>(" << member[i]->getId() << "!);" << endl;
 
             }else{
                 //普通 Map<K,V> 结构
                 s << TAB << "o." << member[i]->getId() << " = "
-                << " mapDeepCopy<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(mPtr->getRightTypePtr()) << ">(this." << member[i]->getId() << "!);" << endl;
+                << " mapDeepCopy<" << toObjStr(mPtr->getLeftTypePtr()) << "," << toObjStr(mPtr->getRightTypePtr()) << ">(" << member[i]->getId() << "!);" << endl;
             }
             DEL_TAB;
             s << TAB << "}" << endl;
@@ -867,7 +859,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
         //自定义结构体
         if (sPtr)
         {
-            s << TAB << "o." << member[i]->getId() << " = this." << member[i]->getId() << "?.deepCopy() as " << toObjStr(member[i]->getTypePtr()) << "?;" << endl;
+            s << TAB << "o." << member[i]->getId() << " = " << member[i]->getId() << "?.deepCopy() as " << toObjStr(member[i]->getTypePtr()) << "?;" << endl;
         }
 
     }
