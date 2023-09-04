@@ -632,7 +632,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
             << getDefaultValue(member[i],"=")
             << ((i < member.size() - 1) ? ", " : "");
     }
-    s << "})" << endl;
+    s << "});" << endl;
     s << endl;
  
 
