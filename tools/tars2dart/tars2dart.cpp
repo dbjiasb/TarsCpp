@@ -551,7 +551,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
     s << TAB << "import '" << _tarsPackage << "tars_deep_copyable.dart';"<< endl;
     s << endl;
     
-
+    string clsName = pPtr->getId();
     bool hasUserId = false;
     //导入tars定义的结构体
     map<string , bool> mapImport;
@@ -565,7 +565,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
                 }
 
                 //【Roll】 插入CommomReq的实现，为了让req可以动态设置tid
-                if(packages[j] == "UserId"){
+                if(packages[j] == "UserId" && clsName != "CommonReq"){
                     s << TAB << "import 'CommonReq.dart';"<< endl;
                     hasUserId = true;
                 }
@@ -580,7 +580,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
     bool bHasImpPrefix = false;
 
     //class定义部分
-    s << TAB << "class " << pPtr->getId() << " extends " <<  "TarsStruct";
+    s << TAB << "class " << clsName << " extends " <<  "TarsStruct";
 
     //【Roll】 插入CommomReq的实现，为了让req可以动态设置tid
     if (hasUserId) {
