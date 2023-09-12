@@ -552,6 +552,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
     s << endl;
     
 
+    bool hasUserId = false;
     //导入tars定义的结构体
     map<string , bool> mapImport;
     for (size_t i = 0; i < member.size(); i++)
@@ -561,6 +562,12 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
             for (size_t j = 0; j < packages.size(); j++){
                 if(mapImport.count(packages[j])){
                     continue;
+                }
+
+                //【Roll】 插入CommomReq的实现，为了让req可以动态设置tid
+                if(packages[j] == "UserId"){
+                    s << TAB << "import 'CommonReq.dart';"<< endl;
+                    hasUserId = true;
                 }
                 mapImport.insert(pair<string, bool>(packages[j] , true));  
                 s << TAB << "import '" << packages[j] << ".dart';"<< endl;
@@ -574,6 +581,11 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
 
     //class定义部分
     s << TAB << "class " << pPtr->getId() << " extends " <<  "TarsStruct";
+
+    //【Roll】 插入CommomReq的实现，为了让req可以动态设置tid
+    if (hasUserId) {
+        s << " implements CommonReq"
+    }
 
     s << endl;
     s << TAB << "{" << endl;
