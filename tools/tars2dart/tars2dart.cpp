@@ -584,7 +584,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
 
     //【Roll】 插入CommomReq的实现，为了让req可以动态设置tid
     if (hasUserId) {
-        s << " implements CommonReq"
+        s << " implements CommonReq";
     }
 
     s << endl;
