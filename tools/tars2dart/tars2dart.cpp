@@ -554,6 +554,7 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
     string clsName = pPtr->getId();
     bool hasUserId = false;
     bool hasCommonRsp = false;
+    bool hasTRsp = false;
     //导入tars定义的结构体
     map<string , bool> mapImport;
     for (size_t i = 0; i < member.size(); i++)
@@ -569,9 +570,14 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
                 if(packages[j] == "UserId" && clsName != "CommonReq"){  //【Roll】 插入CommomReq的实现，为了让req可以动态设置tid
                     s << TAB << "import 'CommonReq.dart';"<< endl;
                     hasUserId = true;
-                } else if (packages[j] == "CommonRsp" && clsName != "DefaultRsp") { //【Roll】 插入DefaultRsp的实现，为了让rsp可以动态获取回包结果
-                    s << TAB << "import 'DefaultRsp.dart';"<< endl;
-                    hasCommonRsp = true;
+                } else if (packages[j] == "CommonRsp" && clsName != "DefaultRsp" && clsName != "BaseCommonTRsp") { //【Roll】 插入DefaultRsp的实现，为了让rsp可以动态获取回包结果
+                    if (member[i]->getId() == "tRsp") {
+                        hasTRsp = true;
+                        s << TAB << "import 'BaseCommonTRsp.dart';"<< endl;
+                    } else if (member[i]->getId() == "tCommonRsp") {
+                        hasCommonRsp = true;
+                        s << TAB << "import 'DefaultRsp.dart';"<< endl;
+                    }
                 }
                 mapImport.insert(pair<string, bool>(packages[j] , true));  
                 s << TAB << "import '" << packages[j] << ".dart';"<< endl;
@@ -591,6 +597,8 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
         s << " implements CommonReq";
     } else if (hasCommonRsp) {  //【Roll】 插入DefaultRsp的实现，为了让rsp可以动态获取回包结果
         s << " implements DefaultRsp";
+    } else if (hasTRsp) {
+        s << " implements BaseCommonTRsp";   
     }
 
     s << endl;
