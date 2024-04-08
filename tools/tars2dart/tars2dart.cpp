@@ -730,9 +730,16 @@ string Tars2Dart::generateDart(const StructPtr& pPtr, const NamespacePtr& nPtr) 
 
         //基础类型
         if (bPtr){
-            s << TAB << member[i]->getId() << " = " 
-                << " _is.read<" << toObjStr(member[i]->getTypePtr()) << ">(" << prefix + member[i]->getId()
-                << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ")" << ";" << endl;
+            string type = toObjStr(member[i]->getTypePtr());
+            if (type == "double") {
+                s << TAB << member[i]->getId() << " = "
+                  << " _is.read<" << type << ">(" << "double"
+                  << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ")" << ";" << endl;
+            } else {
+                s << TAB << member[i]->getId() << " = "
+                  << " _is.read<" << type << ">(" << prefix + member[i]->getId()
+                  << ", " << member[i]->getTag() << ", " << (member[i]->isRequire() ? "true" : "false") << ")" << ";" << endl;
+            }
         }
 
         //数组
